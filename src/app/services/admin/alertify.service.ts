@@ -9,7 +9,7 @@ export class AlertifyService {
 
   constructor() { }
 
-  message(message:string,messageType:MessageType,positionType:PositionType,delay:number=3,dismissOthhers:boolean=false){
+  message(message:string,messageType:AlertifyMessageType,positionType:AlertifyPositionType,delay:number=3,dismissOthhers:boolean=false){
     alertify.set("notifier","delay",delay);
     alertify.set("notifier","position",positionType);
     const msj=alertify[messageType](message);
@@ -23,7 +23,7 @@ export class AlertifyService {
 }
 
 
-export enum MessageType
+export enum AlertifyMessageType
 {
   Error="error",
   Message="message",
@@ -33,7 +33,7 @@ export enum MessageType
 
 }
 
-export enum PositionType
+export enum AlertifyPositionType
 {
   TopRight="top-right",
   TopCenter="top-center",
@@ -41,6 +41,4 @@ export enum PositionType
   BottomRight="bottom-right",
   BottomCenter="bottom-center",
   BottomLeft="bottom-left",
-
-
 }
