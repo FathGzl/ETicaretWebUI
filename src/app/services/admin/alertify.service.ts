@@ -9,12 +9,13 @@ export class AlertifyService {
 
   constructor() { }
 
-  message(message:string,messageType:AlertifyMessageType,positionType:AlertifyPositionType,delay:number=3,dismissOthhers:boolean=false){
-    alertify.set("notifier","delay",delay);
-    alertify.set("notifier","position",positionType);
-    const msj=alertify[messageType](message);
-    if(dismissOthhers)
-      msj.dismissOthhers();
+  message(message: string,messageType:AlertifyMessageType= AlertifyMessageType.Message,options:Partial<AlertfiyOptions>) {
+    alertify.set('notifier','delay',options.delay);
+    alertify.set('notifier','position',options.positionType);
+    const msj = alertify[messageType](message);
+    if (options.dismissOthers) {
+      msj.dismissOthers();      
+    }
   }
 
   dismiss(){
@@ -22,14 +23,20 @@ export class AlertifyService {
   }
 }
 
+export class AlertfiyOptions{
+  positionType:AlertifyPositionType = AlertifyPositionType.BottomLeft;
+  delay:number = 2;
+  dismissOthers:boolean = true;
+}
+
 
 export enum AlertifyMessageType
 {
-  Error="error",
-  Message="message",
-  Notify="notify",
-  Success="success",
-  Warning="warning"
+  Error = "error",
+  Message = "message",
+  Success = "success",
+  Notify = "notify",
+  Warning = "warning"
 
 }
 
