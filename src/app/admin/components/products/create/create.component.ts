@@ -30,13 +30,15 @@ export class CreateComponent extends BaseComponent implements OnInit {
   
     this.productService.createProduct(create_product, () => {
       this.hideSpinner(SpinnerType.Timer);
-      this.alertify.message("Ürün başarıyla eklendi",AlertifyMessageType.Success, {
+      this.alertify.message("Ürün başarıyla eklendi", {
         dismissOthers: true,
+        messageType:AlertifyMessageType.Success,
         positionType: AlertifyPositionType.TopRight
       });
     },(errorMessage:any) => {
-      this.alertify.message(errorMessage,AlertifyMessageType.Error, {
+      this.alertify.message(errorMessage, {
         dismissOthers: true,
+        messageType:AlertifyMessageType.Error,
         positionType: AlertifyPositionType.TopRight
       });
     });

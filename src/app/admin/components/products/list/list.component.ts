@@ -7,6 +7,9 @@ import { BaseComponent, SpinnerType } from '../../../../base/base.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ProductService } from '../../../../services/admin/product.service';
 import { AlertifyMessageType, AlertifyPositionType, AlertifyService } from '../../../../services/admin/alertify.service';
+ import {HttpClient, HttpErrorResponse } from '@angular/common/http';
+
+declare var $ : any;
 
 @Component({
   selector: 'app-list',
@@ -14,26 +17,60 @@ import { AlertifyMessageType, AlertifyPositionType, AlertifyService } from '../.
   styleUrl: './list.component.scss'
 })
 export class ListComponent extends BaseComponent implements OnInit {
-  constructor(spinner:NgxSpinnerService ,private productService:ProductService,private alertify:AlertifyService){
+  constructor(spinner:NgxSpinnerService ,private productService:ProductService,private alertifyService:AlertifyService){
     super(spinner);
   }
 
-  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate'];
+  displayedColumns: string[] = ['name', 'stock', 'price', 'createdDate', 'updatedDate','edit','delete'];
   dataSource = new MatTableDataSource<List_Product>([]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   async getProducts() {
     this.showSpinner(SpinnerType.Timer);
-    const allProducts : Response_List_Product= await this.productService.read(this.paginator ? this.paginator.pageIndex : 0, this.paginator ? this.paginator.pageSize : 20);
+    const allProducts = await this.productService.read(
+      this.paginator ? this.paginator.pageIndex : 0,
+      this.paginator ? this.paginator.pageSize : 5,
+      () => {
+         this.hideSpinner(SpinnerType.Timer);
+      },
+      (errorMessage:any) => {
+         this.alertifyService.message(errorMessage,{
+           dismissOthers: true,
+           messageType:AlertifyMessageType.Error,
+           positionType: AlertifyPositionType.TopRight
+         });
+      });
     
-    this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
+    this.dataSource = new MatTableDataSource<List_Product>(
+      allProducts.products
+    );
     this.paginator.length = allProducts.totalCount;
-    this.dataSource.paginator = this.paginator;
-   }
 
+  }
+
+
+  // async getProducts() {
+  //   this.showSpinner(SpinnerType.Timer);
+  //   const allProducts = await this.productService.read(this.paginator ? this.paginator.pageIndex : 0, this.paginator ? this.paginator.pageSize : 20);
+  //   console.log("allProducts",allProducts); 
+  //    this.dataSource = new MatTableDataSource<List_Product>(allProducts.products);
+  //   // this.paginator.length = allProducts.totalCount;
+  //   // this.dataSource.paginator = this.paginator;
+  //  }
+
+  //  delete(id,event){
+  //    const img : HTMLImageElement = event.srcElement;
+  //  }
+
+  async pageChanged() {
+    await this.getProducts();
+  }
+  
   async ngOnInit() {
     this.getProducts();
   }
+
+  
 }
 
